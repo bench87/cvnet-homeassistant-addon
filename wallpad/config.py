@@ -47,10 +47,9 @@ class RuntimeConfig:
         result = {}
         for item in self.devices:
             try:
-                if 'cmd_on_ack' in item['commands']:
-                    result[item['commands']['cmd_on_ack']] = True
-                if 'cmd_off_ack' in item['commands']:
-                    result[item['commands']['cmd_off_ack']] = True
+                for k, v in item.commands.items():
+                    if '_ack' in k:
+                        result[v] = True
             except:
                 pass
         return result
