@@ -20,18 +20,17 @@ async def command_consumer(writer, config: RuntimeConfig):
                 await config.state_queue.put(msg.state)
                 writer.write(bytes.fromhex(cmd))
                 _LOGGER.info(f'Send the {cmd} on the {i + 1} attempt.')
-                await asyncio.sleep(retry_count)
+                await asyncio.sleep(2)
                 if not msg.ack:
                     _LOGGER.info(f'No ACK is set, so it will be sent twice.')
                     await asyncio.sleep(retry_count)
                     break
-                elif msg.ack not in ACK:
+                elif msg.ack in ACK:
                     _LOGGER.info(f'After 2 sec, receive an ACK {msg.ack} or send the command up to 5 times.')
                 else:
-                    _LOGGER.error(f"it received an ACK {msg.ack}, so we don't retransmit.")
+                    _LOGGER.info(f"it received an ACK {msg.ack}, so we don't retransmit.")
                     del ACK[msg.ack]
                     break
-                await asyncio.sleep(2)
         await writer.drain()
         config.command_queue.task_done()
 
@@ -53,17 +52,14 @@ async def ew11_client(config: RuntimeConfig):
             while True:
                 data = await reader.read(15)
                 packet = data.hex(' ').upper()
-                # _LOGGER.info(packet)
                 for p in regex_c.findall(packet):
-                    if 'F7 20 01 21 9F' in p:
-                        _LOGGER.error(p)
-
-                    if p not in received_packets:
-                        _LOGGER.info(p)
+                    # 온도 패킷은 로깅 안함
+                    if not re.match(r'F7 20 01 4[AB].+', p) and p not in received_packets:
+                        _LOGGER.debug(p)
                     received_packets[p] = True
 
                     if p[:14] in config.acks:
-                        _LOGGER.info(f"received an ack {p}")
+                        _LOGGER.debug(f"received an ack {p}")
                         ACK[p[:14]] = True
                     await state_parser(p, config)
         except Exception as e:

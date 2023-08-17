@@ -10,6 +10,7 @@ from wallpad.config import RuntimeConfig
 from wallpad.models import Command, State
 _LOGGER = logging.getLogger('mqtt')
 
+
 async def device_discovery(client, devices):
     for item in devices:
         payload = json.dumps(item.discovery_payload, ensure_ascii=False, indent=2)
@@ -43,12 +44,14 @@ async def command_consumer(client, config: RuntimeConfig):
             hex_commands = device.get_hex_command(action)
             state_topic = device.get_state_topic(chunk)
             state_key = device.get_state_key(chunk)
+            _LOGGER.debug(f'message => {message}')
+            _LOGGER.debug(f'device => {device}')
             command = Command(device,
                               hex_commands,
                               action,
                               [State(device.component, {state_key: action}, state_topic)],
                               device.get_ack(action))
-            _LOGGER.info(f'payload => {payload} topic => {message.topic}')
+            _LOGGER.info(f'{payload} has been triggered on the {device.name}')
             await config.command_queue.put(command)
 
 

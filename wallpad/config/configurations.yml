@@ -3,7 +3,7 @@ logging:
   formatters:
     colored:
       (): colorlog.ColoredFormatter
-      format:  '%(log_color)s%(asctime)s - %(filename)s - %(levelname)s - %(message)s'
+      format:  '%(log_color)s%(asctime)s - %(filename)s:%(lineno)d - %(levelname)s - %(message)s'
       log_colors:
         DEBUG: white
         INFO: green
