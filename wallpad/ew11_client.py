@@ -19,17 +19,19 @@ async def command_consumer(writer, config: RuntimeConfig):
             for i in range(retry_count):
                 await config.state_queue.put(msg.state)
                 writer.write(bytes.fromhex(cmd))
+                _LOGGER.info(f'Send the {cmd} on the {i + 1} attempt.')
+                await asyncio.sleep(retry_count)
                 if not msg.ack:
-                    _LOGGER.info(f'try write command {i} {cmd} no ack')
-                    await asyncio.sleep(1)
+                    _LOGGER.info(f'No ACK is set, so it will be sent twice.')
+                    await asyncio.sleep(retry_count)
                     break
                 elif msg.ack not in ACK:
-                    _LOGGER.info(f'try write command {i} {cmd}')
-                    await asyncio.sleep(2)
+                    _LOGGER.info(f'After 2 sec, receive an ACK {msg.ack} or send the command up to 5 times.')
                 else:
-                    _LOGGER.error('found ack')
+                    _LOGGER.error(f"it received an ACK {msg.ack}, so we don't retransmit.")
                     del ACK[msg.ack]
                     break
+                await asyncio.sleep(2)
         await writer.drain()
         config.command_queue.task_done()
 
@@ -43,27 +45,26 @@ async def state_parser(packet, config: RuntimeConfig):
 
 async def ew11_client(config: RuntimeConfig):
     regex_c = re.compile(r'(F7 .*? AA)')
-    acks = config.collect_ack()
     while True:
         try:
             reader, writer = await asyncio.open_connection(config.ew11.host, config.ew11.port)
             _LOGGER.info('connected ew11')
             asyncio.ensure_future(asyncio.create_task(command_consumer(writer, config)))
             while True:
-                data = await reader.read(512)
+                data = await reader.read(15)
                 packet = data.hex(' ').upper()
                 # _LOGGER.info(packet)
                 for p in regex_c.findall(packet):
-                    # if '20 01 71 81' in p:
-                    #     _LOGGER.error(p)
+                    if 'F7 20 01 21 9F' in p:
+                        _LOGGER.error(p)
 
                     if p not in received_packets:
                         _LOGGER.info(p)
                     received_packets[p] = True
 
-                    if p in acks:
-                        _LOGGER.info(f"received ack {p}")
-                        ACK[p] = True
+                    if p[:14] in config.acks:
+                        _LOGGER.info(f"received an ack {p}")
+                        ACK[p[:14]] = True
                     await state_parser(p, config)
         except Exception as e:
             _LOGGER.error("socket connection lost %s" % e.args)

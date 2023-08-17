@@ -42,17 +42,17 @@ class RuntimeConfig:
         self.state_queue = asyncio.Queue()
         _devices = raw_config['devices'].items()
         self.devices = [create_instance(c, dev, self.mqtt.topic) for c, devs in _devices for dev in devs]
-
-    def collect_ack(self):
-        result = {}
+        self.acks = {}
         for item in self.devices:
             try:
                 for k, v in item.commands.items():
                     if '_ack' in k:
-                        result[v] = True
-            except:
+                        _LOGGER.debug(f'add ack {v}')
+                        self.acks[v] = True
+            except Exception as e:
+                _LOGGER.error(f'initialize ack failed {e.args}')
                 pass
-        return result
+
 
     def find_device_by_key(self, chunk: List[str]) -> Device:
         try:

@@ -136,8 +136,8 @@ devices:
         - F7 20 21 01 11 03 00 00 00 00 00 00 00 56 AA
         cmd_off:
         - F7 20 21 01 11 00 00 00 00 00 00 00 00 53 AA
-        cmd_on_ack: F7 20 01 21 9F 01 00 00 00 00 00 00 00 E2 AA
-        cmd_off_ack: F7 20 01 21 9F 00 00 00 00 00 00 00 00 E1 AA
+        cmd_on_ack: F7 20 01 21 9F
+        cmd_off_ack: F7 20 01 21 9F
       state_packet: F7 20 01 21 81
       state_position: 5
 
@@ -147,8 +147,8 @@ devices:
         - F7 20 21 01 12 01 00 00 00 00 00 00 00 55 AA
         cmd_off:
         - F7 20 21 01 12 00 00 00 00 00 00 00 00 54 AA
-        cmd_on_ack: F7 20 01 21 9F 01 01 00 00 00 00 00 00 E3 AA
-        cmd_off_ack: F7 20 01 21 9F 01 00 00 00 00 00 00 00 E2 AA
+        cmd_on_ack: F7 20 01 21 9F
+        cmd_off_ack: F7 20 01 21 9F
       state_packet: F7 20 01 21 81
       state_position: 6
     - name: 거실 메인 복도 조명
@@ -158,8 +158,8 @@ devices:
         - F7 20 21 01 13 01 00 00 00 00 00 00 00 56 AA
         cmd_off:
         - F7 20 21 01 13 00 00 00 00 00 00 00 00 55 AA
-        cmd_on_ack: F7 20 01 21 9F 00 00 01 00 00 00 00 00 E2 AA
-        cmd_off_ack: F7 20 01 21 9F 00 00 00 00 00 00 00 00 E1 AA
+        cmd_on_ack: F7 20 01 21 9F
+        cmd_off_ack: F7 20 01 21 9F
       state_packet: F7 20 01 21 81
       state_position: 7
     - name: 안방 메인 조명
@@ -168,8 +168,8 @@ devices:
           - F7 20 22 01 11 01 00 00 00 00 00 00 00 55 AA
         cmd_off:
           - F7 20 22 01 11 00 00 00 00 00 00 00 00 54 AA
-        cmd_on_ack: F7 20 01 22 9F 01 00 00 00 00 00 00 00 E3 AA
-        cmd_off_ack: F7 20 01 22 9F 00 00 00 00 00 00 00 00 E2 AA
+        cmd_on_ack: F7 20 01 22 9F
+        cmd_off_ack: F7 20 01 22 9F
       state_packet: F7 20 01 22 81
       state_position: 5
     - name: 엘리베이터
