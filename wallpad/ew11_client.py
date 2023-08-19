@@ -55,6 +55,7 @@ async def ew11_client(config: RuntimeConfig):
             while True:
                 data = await reader.read(15)
                 packet = data.hex(' ').upper()
+                _LOGGER.debug(f'received packet {packet}')
                 for p in regex_c.findall(packet):
                     # 온도 패킷은 로깅 안함
                     if not re.match(r'F7 20 01 4[AB].+', p) and p not in received_packets:
