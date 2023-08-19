@@ -14,11 +14,11 @@ logging:
     console:
       class : logging.StreamHandler
       formatter: colored
-      level   : INFO
+      level   : DEBUG
       stream  : ext://sys.stdout
   loggers:
     models:
-      level: DEBUG
+      level: INFO
       handlers:
       - console
       propagate: no
