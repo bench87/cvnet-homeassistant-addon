@@ -31,7 +31,10 @@ async def command_consumer(writer, config: RuntimeConfig):
                     _LOGGER.info(f"it received an ACK {msg.ack}, so we don't retransmit.")
                     del ACK[msg.ack]
                     break
+
+        _LOGGER.info(f'{cmd} writer drain')
         await writer.drain()
+        _LOGGER.info(f'{cmd} task done')
         config.command_queue.task_done()
 
 
