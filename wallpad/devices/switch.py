@@ -22,7 +22,7 @@ class Switch(Device):
 
     def parse_state(self, packet: str) -> Optional[List[State]]:
         packets = packet.split(' ')
-        if self.state_packet in packet:
+        if self.state_packet and self.state_packet in packet:
             received_state = self.conv_onoff(packets[self.state_position])
             _LOGGER.debug(f'{self.component} {self.name} {self.current_state}')
             if self.current_state != received_state:

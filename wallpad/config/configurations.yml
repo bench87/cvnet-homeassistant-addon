@@ -180,7 +180,7 @@ devices:
         cmd_off:
           - F7 20 01 E1 81 02 00 01 00 00 02 31 33 EC AA
           - F7 20 01 E1 81 02 00 01 00 00 04 30 38 F2 AA
-      state_packet: F7 20 01 22 81
-      state_position: 5
+      state_packet: ""
+      state_position: ""
 
 
