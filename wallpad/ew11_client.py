@@ -17,22 +17,24 @@ async def command_consumer(writer, config: RuntimeConfig):
         retry_count = 5 if msg.ack else 2
         _LOGGER.info(f'Update state {msg.state}')
         await config.state_queue.put(msg.state)
-        for cmd in msg.commands:
-            done = False
-            for i in range(retry_count):
-                if not done:
+        done = False
+        for i in range(retry_count):
+            if not done:
+                for cmd in msg.commands:
                     writer.write(bytes.fromhex(cmd))
-                    _LOGGER.info(f'Send the {cmd} on the {i + 1} attempt.')
-                    await asyncio.sleep(2)
-                    if not msg.ack:
-                        _LOGGER.info(f'No ACK is set, so it will be sent twice.')
-                    elif msg.ack in ACK:
-                        _LOGGER.info(f"it received an ACK {msg.ack}, so we don't retransmit.")
-                        del ACK[msg.ack]
-                        _LOGGER.info('set done flag True')
-                        done = True
-                    else:
-                        _LOGGER.info(f'After 2 sec, receive an ACK {msg.ack} or send the command up to 5 times.')
+                    await asyncio.sleep(1)
+
+                _LOGGER.info(f'Send the {cmd} on the {i + 1} attempt.')
+                await asyncio.sleep(2)
+                if not msg.ack:
+                    _LOGGER.info(f'No ACK is set, so it will be sent twice.')
+                elif msg.ack in ACK:
+                    _LOGGER.info(f"it received an ACK {msg.ack}, so we don't retransmit.")
+                    del ACK[msg.ack]
+                    _LOGGER.info('set done flag True')
+                    done = True
+                else:
+                    _LOGGER.info(f'After 2 sec, receive an ACK {msg.ack} or send the command up to 5 times.')
 
         _LOGGER.info(f'{cmd} writer drain')
         await writer.drain()
