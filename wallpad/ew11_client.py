@@ -14,7 +14,7 @@ async def command_consumer(writer, config: RuntimeConfig):
     while True:
         msg: Command = await config.command_queue.get()
         _LOGGER.debug(f"Consumed from queue {msg}")
-        retry_count = 2
+        retry_count = 5 if msg.ack else 2
         _LOGGER.info(f'Update state {msg.state}')
         await config.state_queue.put(msg.state)
         for cmd in msg.commands:
