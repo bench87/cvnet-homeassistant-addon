@@ -8,6 +8,7 @@ from wallpad.models import State
 @dataclasses.dataclass
 class Fan(Device):
     current_state: str = None
+    mode: str = None
 
     def conv_onoff(self, p):
         if p == '01':
@@ -26,8 +27,9 @@ class Fan(Device):
             mode_dic = {'00': 'off', '01': 'low', '02': 'medium', '03': 'high'}
             power = 'on' if packets[5] == '01' else 'off'
             mode = mode_dic.get(packets[7])
-            return [State(self.component, {'mode': mode}, self.discovery_payload['pr_mode_stat_t']),
-                    State(self.component, {'state': power}, self.discovery_payload['stat_t'])]
+            self.mode = mode
+            self.current_state = power
+            return [State(self.component, {'mode': mode, 'state': power}, self.discovery_payload['pr_mode_stat_t'])]
 
         return None
 
