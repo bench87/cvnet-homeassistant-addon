@@ -26,7 +26,8 @@ async def main() -> int:
 
     logging.config.dictConfig(client_config['logging'])
     _LOGGER.info("Config directory: %s" % config_dir)
-
+    _LOGGER.info("Waiting 30 seconds for Home Assistant to run")
+    await asyncio.sleep(30)
     runtimeConfig = RuntimeConfig(client_config)
     await asyncio.gather(asyncio.create_task(ew11_client(runtimeConfig)),
                          asyncio.create_task(mqtt_listener(runtimeConfig)))
