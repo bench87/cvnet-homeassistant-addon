@@ -15,7 +15,8 @@ class Switch(Device):
         elif p == '00':
             return 'OFF'
         else:
-            raise Exception(f"can not convert onoff {p}")
+            _LOGGER.error(f"can not convert onoff {p}")
+            return 'OFF'
 
     def get_hex_command(self, action):
         return self.commands['cmd_%s' % action]
