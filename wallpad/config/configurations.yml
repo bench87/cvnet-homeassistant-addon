@@ -37,6 +37,11 @@ logging:
       handlers:
         - console
       propagate: no
+    packet:
+      level: INFO
+      handlers:
+        - console
+      propagate: no
   root:
     level: INFO
     handlers:

@@ -6,6 +6,7 @@ from wallpad.config import RuntimeConfig
 from wallpad.models import Command
 
 _LOGGER = logging.getLogger('ew11')
+_PLOGGER = logging.getLogger('packet')
 ACK = {}
 received_packets = {}
 
@@ -63,7 +64,7 @@ async def ew11_client(config: RuntimeConfig):
                 for p in regex_c.findall(packet):
                     # 온도 패킷은 로깅 안함
                     if not re.match(r'F7 20 01 4[AB].+', p) and p not in received_packets:
-                        _LOGGER.debug(p)
+                        _PLOGGER.info(p)
                     received_packets[p] = True
 
                     if p[:14] in config.acks:
